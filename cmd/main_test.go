@@ -8,7 +8,6 @@ import (
 )
 
 func TestChat(t *testing.T) {
-	// テストケースを定義
 	tests := []struct {
 		name    string
 		prompt  string
@@ -28,10 +27,7 @@ func TestChat(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// app.Chat関数を呼び出し
 			vd, err := app.Chat(tt.prompt)
-
-			// エラーの有無を確認
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
