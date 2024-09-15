@@ -1,1 +1,1 @@
-# querychat
+# QueryChat
