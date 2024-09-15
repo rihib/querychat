@@ -4,10 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"os"
 	"regexp"
 
-	"github.com/joho/godotenv"
 	"github.com/rihib/querychat/internal/domain/entity"
 	openai "github.com/sashabaranov/go-openai"
 )
@@ -16,12 +14,10 @@ type GPT4 struct {
 	apiKey string
 }
 
-func NewGPT4() (*GPT4, error) {
-	if err := godotenv.Load(); err != nil {
-		slog.Error("error loading .env file", "msg", err.Error())
-		return nil, fmt.Errorf("error loading .env file: %v", err)
+func NewGPT4(apiKey string) (*GPT4, error) {
+	if apiKey == "" {
+		return nil, fmt.Errorf("api key cannot be empty")
 	}
-	apiKey := os.Getenv("API_KEY")
 	return &GPT4{apiKey: apiKey}, nil
 }
 

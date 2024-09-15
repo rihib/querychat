@@ -68,3 +68,11 @@ func NewVisualizableData(rows *sql.Rows, output LLMOutput) (*VisualizableData, e
 		chart: chart,
 	}, nil
 }
+
+func (vd *VisualizableData) Datas() []map[string]interface{} {
+	return vd.datas
+}
+
+func (vd *VisualizableData) Chart() map[string]interface{} {
+	return vd.chart
+}
