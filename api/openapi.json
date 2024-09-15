@@ -1,0 +1,118 @@
+{
+  "openapi":"3.0.3",
+  "info": {
+    "title":"QueryChat schema",
+    "version":"0.0.1"
+  },
+  "servers": [
+    {"url":"https://localhost:8080"}
+  ],
+  "tags": [
+    {"name":"chat"}
+  ],
+  "paths": {
+    "/v0.0.1/chat": {
+      "post": {
+        "tags": ["chat"],
+        "summary":"Send message to the server",
+        "operationId": "sendMSG",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref":"#/components/schemas/MSG"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description":"Successful operation",
+            "headers": {
+              "Access-Control-Allow-Origin": {
+                "description": "This is used to specify the CORS policy for the API.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Methods": {
+                "description": "This is used to specify the allowed HTTP methods for the API.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Allow-Headers": {
+                "description": "This is used to specify the allowed headers for the API.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "Access-Control-Max-Age": {
+                "description": "This is used to specify the maximum amount of time that the results of a preflight request can be cached.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref":"#/components/schemas/VisualizableData"
+                }
+              }
+            }
+          },
+          "default": {
+            "description":"Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref":"#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MSG": {
+        "type":"object",
+        "required": ["dbType, prompt"],
+        "properties": {
+          "dbType": {
+            "type":"string"
+          },
+          "prompt": {
+            "type":"string"
+          }
+        }
+      },
+      "VisualizableData": {
+        "type":"object",
+        "required": ["visualizableData"],
+        "properties": {
+          "visualizableData": {
+            "type":"string"
+          }
+        }
+      },
+      "Error": {
+        "description": "Represents error object",
+        "type":"object",
+        "properties": {
+          "code": {
+            "type":"integer",
+            "format":"int64"
+          },
+          "message": {
+            "type":"string"
+          }
+        },
+        "required": ["code", "message"]
+      }
+    }
+  }
+}
