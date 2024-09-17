@@ -32,7 +32,7 @@ func Chat(prompt string) (*entity.VisualizableData, error) {
 	fmt.Println("System Prompt:\n" + optimizedPrompt.SystemPrompt())
 	fmt.Println("User Prompt:\n" + optimizedPrompt.UserPrompt())
 
-	if err := godotenv.Load("/Users/rihib/dev/querychat/internal/config/.env"); err != nil {
+	if err := godotenv.Load(config.ENV_FILE_PATH); err != nil {
 		return nil, fmt.Errorf("error loading .env file: %v", err)
 	}
 	apiKey := os.Getenv("API_KEY")

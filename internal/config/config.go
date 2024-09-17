@@ -1,6 +1,12 @@
 package config
 
 const (
+	ENV_FILE_PATH = "/Users/rihib/dev/querychat/internal/config/.env"
+
+	DB_NAME          = "sqlite3"
+	DB_FILE_PATH     = "/Users/rihib/dev/querychat/test/chinook.db"
+	SCHEMA_FILE_PATH = "/Users/rihib/dev/querychat/test/schema.sql"
+
 	SYSTEM_PROMPT = "Given this database schema:\n" +
 		"\n" +
 		"```sql\n" +
@@ -48,8 +54,4 @@ const (
 		"  - Clearly demarcate the SQL query and JSON data.\n" +
 		"  - Adhere strictly to JSON formatting standards.\n" +
 		"  - The schema is provided for context.\n"
-
-	DB_NAME          = "sqlite3"
-	DB_FILE_PATH     = "/Users/rihib/dev/querychat/test/chinook.db"
-	SCHEMA_FILE_PATH = "/Users/rihib/dev/querychat/test/schema.sql"
 )
