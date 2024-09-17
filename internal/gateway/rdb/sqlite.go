@@ -8,19 +8,19 @@ import (
 	"github.com/rihib/querychat/internal/domain/entity"
 )
 
-type SQLite struct {
+type SQLite3 struct {
 	DB *sql.DB
 }
 
-func NewSQLite(info *entity.UserDBInfo) (*SQLite, error) {
+func NewSQLite3(info *entity.UserDBInfo) (*SQLite3, error) {
 	db, err := sql.Open(info.Name(), info.Filepath())
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %v", err)
 	}
-	return &SQLite{DB: db}, nil
+	return &SQLite3{DB: db}, nil
 }
 
-func (s *SQLite) Exec(output entity.LLMOutput) (*sql.Rows, error) {
+func (s *SQLite3) Exec(output entity.LLMOutput) (*sql.Rows, error) {
 	rows, err := s.DB.Query(output.Query())
 	if err != nil {
 		return nil, fmt.Errorf("failed to query database: %v", err)

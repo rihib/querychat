@@ -41,7 +41,7 @@ func Chat(prompt string) (*entity.VisualizableData, error) {
 		return nil, err
 	}
 
-	repo, err := rdb.NewSQLite(info)
+	repo, err := rdb.NewSQLite3(info)
 	if err != nil {
 		return nil, err
 	}
