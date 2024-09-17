@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"regexp"
 
 	"github.com/rihib/querychat/internal/domain/entity"
+	"github.com/rihib/querychat/internal/pkg"
 	openai "github.com/sashabaranov/go-openai"
 )
 
@@ -46,23 +46,11 @@ func (gpt4 *GPT4) Ask(optimized entity.OptimizedPrompt) (*entity.LLMOutput, erro
 	output := resp.Choices[0].Message.Content
 
 	var query, data string
-	if query, err = extractPattern(output, "sql"); err != nil {
+	if query, err = pkg.FindPattern(output, "(?s)```sql\n(.+?)\n```"); err != nil {
 		return nil, err
 	}
-	if data, err = extractPattern(output, "json"); err != nil {
+	if data, err = pkg.FindPattern(output, "(?s)```json\n(.+?)\n```"); err != nil {
 		return nil, err
 	}
 	return entity.NewLLMOutput(query, data)
-}
-
-func extractPattern(output string, patternType string) (string, error) {
-	pattern := regexp.MustCompile(fmt.Sprintf("(?s)```%s\n(.+?)\n```", patternType))
-	matches := pattern.FindStringSubmatch(output)
-
-	if len(matches) <= 1 {
-		slog.Info(fmt.Sprintf("%s not found", patternType), "output", output)
-		return "", fmt.Errorf("%s not found", patternType)
-	}
-
-	return matches[1], nil
 }

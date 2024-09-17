@@ -23,22 +23,18 @@ func Chat(prompt string) (*entity.VisualizableData, error) {
 		return nil, err
 	}
 
-	schema, err := readFile(config.SCHEMA_FILE_PATH)
-	if err != nil {
-		return nil, err
-	}
-	info, err := entity.NewUserDBInfo(config.DB_NAME, config.DB_FILE_PATH, schema)
+	info, err := entity.NewUserDBInfo(config.DB_NAME, config.DB_FILE_PATH, config.SCHEMA_FILE_PATH)
 	if err != nil {
 		return nil, err
 	}
 
 	optimizedPrompt := entity.NewOptimizedPrompt(*originalPrompt, *templatePrompt, *info)
-	if err := godotenv.Load("/Users/rihib/dev/querychat/internal/config/.env"); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
-	}
 	fmt.Println("System Prompt:\n" + optimizedPrompt.SystemPrompt())
 	fmt.Println("User Prompt:\n" + optimizedPrompt.UserPrompt())
 
+	if err := godotenv.Load("/Users/rihib/dev/querychat/internal/config/.env"); err != nil {
+		return nil, fmt.Errorf("error loading .env file: %v", err)
+	}
 	apiKey := os.Getenv("API_KEY")
 	llm, err := llm.NewGPT4(apiKey)
 	if err != nil {
@@ -71,12 +67,4 @@ func Chat(prompt string) (*entity.VisualizableData, error) {
 	fmt.Printf("Visualizable Data: Chart:\n%v\n", vd.Chart())
 
 	return vd, nil
-}
-
-func readFile(filePath string) (string, error) {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return "", fmt.Errorf("failed to read file: %v", err)
-	}
-	return string(content), nil
 }

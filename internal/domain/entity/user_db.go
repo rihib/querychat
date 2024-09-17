@@ -1,6 +1,9 @@
 package entity
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type UserDBInfo struct {
 	name     string // e.g. "MySQL", "PostgreSQL"
@@ -8,20 +11,24 @@ type UserDBInfo struct {
 	schema   string
 }
 
-func NewUserDBInfo(name, filepath, schema string) (*UserDBInfo, error) {
+func NewUserDBInfo(name, filepath, schemapath string) (*UserDBInfo, error) {
 	if name == "" {
 		return nil, fmt.Errorf("name cannot be empty")
 	}
 	if filepath == "" {
 		return nil, fmt.Errorf("filepath cannot be empty")
 	}
-	if schema == "" {
-		return nil, fmt.Errorf("schema cannot be empty")
+	if schemapath == "" {
+		return nil, fmt.Errorf("schemapath cannot be empty")
+	}
+	schema, err := os.ReadFile(schemapath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %v", err)
 	}
 	return &UserDBInfo{
 		name:     name,
 		filepath: filepath,
-		schema:   schema,
+		schema:   string(schema),
 	}, nil
 }
 
