@@ -1,71 +1,51 @@
 package entity
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 )
 
 type VisualizableData struct {
 	datas []map[string]interface{}
-	chart map[string]interface{}
+	chart map[string]string
 }
 
-func NewVisualizableData(rows *sql.Rows, output LLMOutput) (*VisualizableData, error) {
-	if rows == nil {
-		return nil, fmt.Errorf("rows cannot be nil")
+func NewVisualizableData(datas []map[string]interface{}, output LLMOutput) (*VisualizableData, error) {
+	if datas == nil {
+		return nil, fmt.Errorf("datas cannot be nil")
 	}
 
-	columns, err := rows.Columns()
-	if err != nil {
-		log.Printf("failed to get columns: %v", err)
-		return nil, fmt.Errorf("failed to get columns: %v", err)
+	dataBytes := []byte(output.Data())
+	if !json.Valid(dataBytes) {
+		return nil, fmt.Errorf("provided data is not valid JSON")
 	}
-	datas := []map[string]interface{}{}
-	for rows.Next() {
-		values := make([]interface{}, len(columns))
-		valuePtrs := make([]interface{}, len(columns))
-		for i := 0; i < len(columns); i++ {
-			valuePtrs[i] = &values[i]
-		}
-		err := rows.Scan(valuePtrs...)
-		if err != nil {
-			log.Printf("failed to scan rows: %v", err)
-			return nil, fmt.Errorf("failed to scan rows: %v", err)
-		}
-		rowMap := make(map[string]interface{})
-		for i, colName := range columns {
-			var value interface{}
-			val := values[i]
-
-			b, ok := val.([]byte)
-			if ok {
-				value = string(b)
-			} else {
-				value = val
-			}
-
-			rowMap[colName] = value
-		}
-		datas = append(datas, rowMap)
-	}
-	if err := rows.Err(); err != nil {
-		log.Printf("failed to get rows: %v", err)
-		return nil, fmt.Errorf("failed to get rows: %v", err)
-	}
-	defer rows.Close()
 
 	var chart map[string]interface{}
-	err = json.Unmarshal([]byte(output.Data()), &chart)
+	err := json.Unmarshal(dataBytes, &chart)
 	if err != nil {
-		log.Printf("failed to unmarshal JSON: %v", err)
 		return nil, fmt.Errorf("failed to unmarshal JSON: %v", err)
+	}
+
+	expectedKeys := map[string]struct{}{"type": {}, "x": {}, "y": {}}
+	for key := range expectedKeys {
+		if _, ok := chart[key]; !ok {
+			return nil, fmt.Errorf("missing expected key: %s", key)
+		}
+	}
+	for key := range chart {
+		if _, ok := expectedKeys[key]; !ok {
+			return nil, fmt.Errorf("unexpected key in JSON data: %s", key)
+		}
+	}
+
+	var cleanedChart = make(map[string]string)
+	for key, value := range chart {
+		cleanedChart[key] = fmt.Sprintf("%v", value)
 	}
 
 	return &VisualizableData{
 		datas: datas,
-		chart: chart,
+		chart: cleanedChart,
 	}, nil
 }
 
@@ -73,6 +53,6 @@ func (vd *VisualizableData) Datas() []map[string]interface{} {
 	return vd.datas
 }
 
-func (vd *VisualizableData) Chart() map[string]interface{} {
+func (vd *VisualizableData) Chart() map[string]string {
 	return vd.chart
 }

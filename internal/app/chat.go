@@ -1,18 +1,12 @@
 package app
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/joho/godotenv"
 	"github.com/rihib/querychat/internal/config"
 	"github.com/rihib/querychat/internal/domain/entity"
 	"github.com/rihib/querychat/internal/domain/usecase"
-	"github.com/rihib/querychat/internal/gateway/llm"
-	"github.com/rihib/querychat/internal/gateway/rdb"
 )
 
-func Chat(prompt string) (*entity.VisualizableData, error) {
+func Chat(prompt string, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
 	originalPrompt, err := entity.NewOriginalPrompt(prompt)
 	if err != nil {
 		return nil, err
@@ -23,25 +17,7 @@ func Chat(prompt string) (*entity.VisualizableData, error) {
 		return nil, err
 	}
 
-	info, err := entity.NewUserDBInfo(config.DB_NAME, config.DB_FILE_PATH, config.SCHEMA_FILE_PATH)
-	if err != nil {
-		return nil, err
-	}
-
-	optimizedPrompt := entity.NewOptimizedPrompt(*originalPrompt, *templatePrompt, *info)
-	fmt.Println("System Prompt:\n" + optimizedPrompt.SystemPrompt())
-	fmt.Println("User Prompt:\n" + optimizedPrompt.UserPrompt())
-
-	if err := godotenv.Load(config.ENV_FILE_PATH); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %v", err)
-	}
-	apiKey := os.Getenv("API_KEY")
-	llm, err := llm.NewGPT4(apiKey)
-	if err != nil {
-		return nil, err
-	}
-
-	repo, err := rdb.NewSQLite3(info)
+	optimizedPrompt, err := entity.NewOptimizedPrompt(*originalPrompt, *templatePrompt, config.DB_NAME, config.SCHEMA_FILE_PATH)
 	if err != nil {
 		return nil, err
 	}
@@ -51,20 +27,16 @@ func Chat(prompt string) (*entity.VisualizableData, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("LLM Output: Query:\n" + output.Query())
-	fmt.Println("LLM Output: Data:\n" + output.Data())
 
-	rows, err := cu.Exec(*output)
+	datas, err := cu.Exec(*output)
 	if err != nil {
 		return nil, err
 	}
 
-	vd, err := entity.NewVisualizableData(rows, *output)
+	vd, err := entity.NewVisualizableData(datas, *output)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("Visualizable Data: Datas:\n%v\n", vd.Datas())
-	fmt.Printf("Visualizable Data: Chart:\n%v\n", vd.Chart())
 
 	return vd, nil
 }

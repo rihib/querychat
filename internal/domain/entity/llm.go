@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"os"
 )
 
 type OriginalPrompt struct {
@@ -38,13 +39,21 @@ type OptimizedPrompt struct {
 	userPrompt   string
 }
 
-func NewOptimizedPrompt(original OriginalPrompt, template TemplatePrompt, db UserDBInfo) *OptimizedPrompt {
-	systemPrompt := fmt.Sprintf(template.systemPrompt, db.schema)
-	userPrompt := fmt.Sprintf(template.userPrompt, db.name, original.prompt, db.name)
+func NewOptimizedPrompt(original OriginalPrompt, template TemplatePrompt, dbName string, schemapath string) (*OptimizedPrompt, error) {
+	if schemapath == "" {
+		return nil, fmt.Errorf("schemapath cannot be empty")
+	}
+	schema, err := os.ReadFile(schemapath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file: %v", err)
+	}
+
+	systemPrompt := fmt.Sprintf(template.systemPrompt, schema)
+	userPrompt := fmt.Sprintf(template.userPrompt, dbName, original.prompt, dbName)
 	return &OptimizedPrompt{
 		systemPrompt: systemPrompt,
 		userPrompt:   userPrompt,
-	}
+	}, nil
 }
 
 func (optimized *OptimizedPrompt) SystemPrompt() string {
