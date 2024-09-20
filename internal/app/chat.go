@@ -5,18 +5,11 @@ import (
 	"github.com/rihib/querychat/internal/domain/usecase"
 )
 
-func Chat(qcc entity.QueryChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
-	originalPrompt, err := entity.NewOriginalPrompt(qcc.Prompt())
-	if err != nil {
-		return nil, err
-	}
-
-	formatPrompt, err := entity.NewFormatPrompt(qcc.SystemPrompt(), qcc.UserPrompt())
-	if err != nil {
-		return nil, err
-	}
-
-	optimizedPrompt, err := entity.NewOptimizedPrompt(*originalPrompt, *formatPrompt, qcc.DBName(), qcc.Schema())
+/*
+Chat is a function that asks LLM, gets the query and executes it, and returns the visualizable data.
+*/
+func Chat(cc entity.ChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
+	optimizedPrompt, err := entity.NewOptimizedPrompt(cc)
 	if err != nil {
 		return nil, err
 	}

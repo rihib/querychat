@@ -66,7 +66,7 @@ func TestChat(t *testing.T) {
 				mockRepo.EXPECT().Exec(*output).Return(datas, nil)
 			}
 
-			qcc, err := entity.NewQueryChatConfig(
+			cc, err := entity.NewChatConfig(
 				"What are the total purchases per user? (sample prompt)",
 				"system prompt placeholder",
 				"user prompt placeholder",
@@ -78,7 +78,7 @@ func TestChat(t *testing.T) {
 			}
 
 			// Act
-			vd, err := app.Chat(*qcc, mockLLM, mockRepo)
+			vd, err := app.Chat(*cc, mockLLM, mockRepo)
 
 			// Assert
 			assert.Equal(t, tt.want.vd, vd)

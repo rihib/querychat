@@ -26,6 +26,13 @@ func (cu *ChatUsecase) AskLLM(prompt entity.OptimizedPrompt) (*entity.LLMOutput,
 	return cu.llm.Ask(prompt)
 }
 
+/*
+ExecQuery is a function that executes the query and returns the result.
+
+Example return value:
+
+[{"UserName": "Alice", "TotalAmount": 100}, {"UserName": "Bob", "TotalAmount": 200}]
+*/
 func (cu *ChatUsecase) ExecQuery(output entity.LLMOutput) ([]map[string]interface{}, error) {
 	return cu.repo.Exec(output)
 }

@@ -5,7 +5,11 @@ import (
 	"fmt"
 )
 
-type QueryChatConfig struct {
+/*
+ChatConfig is a configuration for the chat.
+Mainly used for constructing the optimized prompt.
+*/
+type ChatConfig struct {
 	prompt       string
 	systemPrompt string
 	userPrompt   string
@@ -13,7 +17,7 @@ type QueryChatConfig struct {
 	schema       string
 }
 
-func NewQueryChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string) (*QueryChatConfig, error) {
+func NewChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string) (*ChatConfig, error) {
 	if prompt == "" {
 		return nil, fmt.Errorf("prompt cannot be empty")
 	}
@@ -29,7 +33,7 @@ func NewQueryChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string)
 	if schema == "" {
 		return nil, fmt.Errorf("schema cannot be empty")
 	}
-	return &QueryChatConfig{
+	return &ChatConfig{
 		prompt:       prompt,
 		systemPrompt: systemPrompt,
 		userPrompt:   userPrompt,
@@ -38,26 +42,80 @@ func NewQueryChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string)
 	}, nil
 }
 
-func (qcc *QueryChatConfig) Prompt() string {
-	return qcc.prompt
+/*
+Optimized prompt is a prompt that is optimized based on original prompt.
+Prompt is composed of two parts: system prompt and user prompt.
+System prompt is the part that tells the LLM the prerequisites.
+User prompt is the part that asks the actual question.
+*/
+type OptimizedPrompt struct {
+	systemPrompt string
+	userPrompt   string
 }
 
-func (qcc *QueryChatConfig) SystemPrompt() string {
-	return qcc.systemPrompt
+func NewOptimizedPrompt(cc ChatConfig) (*OptimizedPrompt, error) {
+	systemPrompt := fmt.Sprintf(cc.systemPrompt, cc.schema)
+	userPrompt := fmt.Sprintf(cc.userPrompt, cc.dbName, cc.prompt, cc.dbName)
+	return &OptimizedPrompt{
+		systemPrompt: systemPrompt,
+		userPrompt:   userPrompt,
+	}, nil
 }
 
-func (qcc *QueryChatConfig) UserPrompt() string {
-	return qcc.userPrompt
+func (optimized *OptimizedPrompt) SystemPrompt() string {
+	return optimized.systemPrompt
 }
 
-func (qcc *QueryChatConfig) DBName() string {
-	return qcc.dbName
+func (optimized *OptimizedPrompt) UserPrompt() string {
+	return optimized.userPrompt
 }
 
-func (qcc *QueryChatConfig) Schema() string {
-	return qcc.schema
+/*
+LLMOutput is the output of the LLM.
+
+Example:
+
+	{
+		query: "SELECT user_name, SUM(amount) AS total_amount FROM purchases GROUP BY user_id, user_name".
+		chart: {"type": "bar", "x": "UserName", "y": "TotalAmount"},
+	}
+*/
+type LLMOutput struct {
+	query string
+	chart string
 }
 
+func NewLLMOutput(query string, chart string) (*LLMOutput, error) {
+	if query == "" {
+		return nil, fmt.Errorf("query cannot be empty")
+	}
+	if chart == "" {
+		return nil, fmt.Errorf("chart cannot be empty")
+	}
+	return &LLMOutput{
+		query: query,
+		chart: chart,
+	}, nil
+}
+
+func (output *LLMOutput) Query() string {
+	return output.query
+}
+
+func (output *LLMOutput) Chart() string {
+	return output.chart
+}
+
+/*
+VisualizableData is the data that can be visualized.
+
+Example:
+
+	{
+		"chart": {"type": "bar", "x": "UserName", "y": "TotalAmount"},
+		"datas": [{"UserName": "Alice", "TotalAmount": 100},{"UserName": "Bob", "TotalAmount": 200}],
+	}
+*/
 type VisualizableData struct {
 	datas []map[string]interface{}
 	chart map[string]string

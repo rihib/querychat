@@ -22,12 +22,12 @@ func init() {
 }
 
 func main() {
-	// QueryChat Config
+	// Chat Config
 	schema, err := os.ReadFile(config.SCHEMA_FILE_PATH)
 	if err != nil {
 		slog.Error("failed to read schema file", "msg", err.Error())
 	}
-	qcc, err := entity.NewQueryChatConfig(
+	cc, err := entity.NewChatConfig(
 		PROMPT,
 		config.SYSTEM_PROMPT,
 		config.USER_PROMPT,
@@ -55,7 +55,7 @@ func main() {
 	}
 
 	// Chat
-	vd, err := app.Chat(*qcc, llm, repo)
+	vd, err := app.Chat(*cc, llm, repo)
 	if err != nil {
 		slog.Error("failed to chat", "msg", err.Error())
 		return
