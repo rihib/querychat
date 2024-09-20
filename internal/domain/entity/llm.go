@@ -60,19 +60,19 @@ func (optimized *OptimizedPrompt) UserPrompt() string {
 
 type LLMOutput struct {
 	query string
-	data  string
+	chart string
 }
 
-func NewLLMOutput(query string, data string) (*LLMOutput, error) {
+func NewLLMOutput(query string, chart string) (*LLMOutput, error) {
 	if query == "" {
 		return nil, fmt.Errorf("query cannot be empty")
 	}
-	if data == "" {
-		return nil, fmt.Errorf("data cannot be empty")
+	if chart == "" {
+		return nil, fmt.Errorf("chart cannot be empty")
 	}
 	return &LLMOutput{
 		query: query,
-		data:  data,
+		chart: chart,
 	}, nil
 }
 
@@ -80,6 +80,6 @@ func (output *LLMOutput) Query() string {
 	return output.query
 }
 
-func (output *LLMOutput) Data() string {
-	return output.data
+func (output *LLMOutput) Chart() string {
+	return output.chart
 }

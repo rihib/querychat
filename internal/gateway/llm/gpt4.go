@@ -45,12 +45,12 @@ func (gpt4 *GPT4) Ask(optimized entity.OptimizedPrompt) (*entity.LLMOutput, erro
 	}
 	output := resp.Choices[0].Message.Content
 
-	var query, data string
+	var query, chart string
 	if query, err = pkg.FindPattern(output, "(?s)```sql\n(.+?)\n```"); err != nil {
 		return nil, err
 	}
-	if data, err = pkg.FindPattern(output, "(?s)```json\n(.+?)\n```"); err != nil {
+	if chart, err = pkg.FindPattern(output, "(?s)```json\n(.+?)\n```"); err != nil {
 		return nil, err
 	}
-	return entity.NewLLMOutput(query, data)
+	return entity.NewLLMOutput(query, chart)
 }

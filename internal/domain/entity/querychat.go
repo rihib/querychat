@@ -69,13 +69,13 @@ func NewVisualizableData(datas []map[string]interface{}, output LLMOutput) (*Vis
 		return nil, fmt.Errorf("datas cannot be nil")
 	}
 
-	dataBytes := []byte(output.Data())
-	if !json.Valid(dataBytes) {
-		return nil, fmt.Errorf("provided data is not valid JSON")
+	chartBytes := []byte(output.Chart())
+	if !json.Valid(chartBytes) {
+		return nil, fmt.Errorf("provided chart is not valid JSON")
 	}
 
 	var chart map[string]interface{}
-	err := json.Unmarshal(dataBytes, &chart)
+	err := json.Unmarshal(chartBytes, &chart)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %v", err)
 	}
@@ -88,7 +88,7 @@ func NewVisualizableData(datas []map[string]interface{}, output LLMOutput) (*Vis
 	}
 	for key := range chart {
 		if _, ok := expectedKeys[key]; !ok {
-			return nil, fmt.Errorf("unexpected key in JSON data: %s", key)
+			return nil, fmt.Errorf("unexpected key in JSON chart: %s", key)
 		}
 	}
 
