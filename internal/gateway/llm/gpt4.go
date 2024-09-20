@@ -3,7 +3,6 @@ package llm
 import (
 	"context"
 	"fmt"
-	"log/slog"
 
 	"github.com/rihib/querychat/internal/domain/entity"
 	"github.com/rihib/querychat/internal/pkg"
@@ -40,7 +39,6 @@ func (gpt4 *GPT4) Ask(optimized entity.OptimizedPrompt) (*entity.LLMOutput, erro
 		},
 	)
 	if err != nil {
-		slog.Warn("openai chat completion error", "msg", err.Error())
 		return nil, fmt.Errorf("openai chat completion error: %v", err)
 	}
 	output := resp.Choices[0].Message.Content

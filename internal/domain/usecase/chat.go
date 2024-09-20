@@ -22,10 +22,10 @@ func NewChatUsecase(llm LLM, repo ChatRepository) *ChatUsecase {
 	return &ChatUsecase{llm: llm, repo: repo}
 }
 
-func (cu *ChatUsecase) Ask(prompt entity.OptimizedPrompt) (*entity.LLMOutput, error) {
+func (cu *ChatUsecase) AskLLM(prompt entity.OptimizedPrompt) (*entity.LLMOutput, error) {
 	return cu.llm.Ask(prompt)
 }
 
-func (cu *ChatUsecase) Exec(output entity.LLMOutput) ([]map[string]interface{}, error) {
+func (cu *ChatUsecase) ExecQuery(output entity.LLMOutput) ([]map[string]interface{}, error) {
 	return cu.repo.Exec(output)
 }

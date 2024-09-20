@@ -16,7 +16,6 @@ func NewSQLite3(filepath string) (*SQLite3, error) {
 	if filepath == "" {
 		return nil, fmt.Errorf("filepath cannot be empty")
 	}
-
 	db, err := sql.Open("sqlite3", filepath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %v", err)
@@ -35,7 +34,6 @@ func (s *SQLite3) Exec(output entity.LLMOutput) ([]map[string]interface{}, error
 	if err != nil {
 		return nil, fmt.Errorf("failed to get columns: %v", err)
 	}
-
 	datas := []map[string]interface{}{}
 	for rows.Next() {
 		values := make([]interface{}, len(columns))
@@ -59,7 +57,6 @@ func (s *SQLite3) Exec(output entity.LLMOutput) ([]map[string]interface{}, error
 		}
 		datas = append(datas, rowMap)
 	}
-
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("failed to get rows: %v", err)
 	}

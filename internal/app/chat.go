@@ -5,29 +5,29 @@ import (
 	"github.com/rihib/querychat/internal/domain/usecase"
 )
 
-func Chat(qcConfig entity.QueryChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
-	originalPrompt, err := entity.NewOriginalPrompt(qcConfig.Prompt())
+func Chat(qcc entity.QueryChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
+	originalPrompt, err := entity.NewOriginalPrompt(qcc.Prompt())
 	if err != nil {
 		return nil, err
 	}
 
-	templatePrompt, err := entity.NewTemplatePrompt(qcConfig.SystemPrompt(), qcConfig.UserPrompt())
+	formatPrompt, err := entity.NewFormatPrompt(qcc.SystemPrompt(), qcc.UserPrompt())
 	if err != nil {
 		return nil, err
 	}
 
-	optimizedPrompt, err := entity.NewOptimizedPrompt(*originalPrompt, *templatePrompt, qcConfig.DBName(), qcConfig.Schema())
+	optimizedPrompt, err := entity.NewOptimizedPrompt(*originalPrompt, *formatPrompt, qcc.DBName(), qcc.Schema())
 	if err != nil {
 		return nil, err
 	}
 
 	cu := usecase.NewChatUsecase(llm, repo)
-	output, err := cu.Ask(*optimizedPrompt)
+	output, err := cu.AskLLM(*optimizedPrompt)
 	if err != nil {
 		return nil, err
 	}
 
-	datas, err := cu.Exec(*output)
+	datas, err := cu.ExecQuery(*output)
 	if err != nil {
 		return nil, err
 	}

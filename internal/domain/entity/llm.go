@@ -15,19 +15,19 @@ func NewOriginalPrompt(prompt string) (*OriginalPrompt, error) {
 	return &OriginalPrompt{prompt: prompt}, nil
 }
 
-type TemplatePrompt struct {
+type FormatPrompt struct {
 	systemPrompt string
 	userPrompt   string
 }
 
-func NewTemplatePrompt(systemPrompt, userPrompt string) (*TemplatePrompt, error) {
+func NewFormatPrompt(systemPrompt, userPrompt string) (*FormatPrompt, error) {
 	if systemPrompt == "" {
 		return nil, fmt.Errorf("system prompt cannot be empty")
 	}
 	if userPrompt == "" {
 		return nil, fmt.Errorf("user prompt cannot be empty")
 	}
-	return &TemplatePrompt{
+	return &FormatPrompt{
 		systemPrompt: systemPrompt,
 		userPrompt:   userPrompt,
 	}, nil
@@ -38,7 +38,7 @@ type OptimizedPrompt struct {
 	userPrompt   string
 }
 
-func NewOptimizedPrompt(original OriginalPrompt, template TemplatePrompt, dbName string, schema string) (*OptimizedPrompt, error) {
+func NewOptimizedPrompt(original OriginalPrompt, template FormatPrompt, dbName string, schema string) (*OptimizedPrompt, error) {
 	if schema == "" {
 		return nil, fmt.Errorf("schema cannot be empty")
 	}

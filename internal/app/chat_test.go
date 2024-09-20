@@ -66,13 +66,19 @@ func TestChat(t *testing.T) {
 				mockRepo.EXPECT().Exec(*output).Return(datas, nil)
 			}
 
-			qcConfig, err := entity.NewQueryChatConfig("prompt", "system", "user", "db", "schema")
+			qcc, err := entity.NewQueryChatConfig(
+				"What are the total purchases per user? (sample prompt)",
+				"system prompt placeholder",
+				"user prompt placeholder",
+				"db name placeholder",
+				"schema placeholder",
+			)
 			if err != nil {
 				t.Fatalf("failed to create query chat config: %v", err)
 			}
 
 			// Act
-			vd, err := app.Chat(*qcConfig, mockLLM, mockRepo)
+			vd, err := app.Chat(*qcc, mockLLM, mockRepo)
 
 			// Assert
 			assert.Equal(t, tt.want.vd, vd)

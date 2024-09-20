@@ -29,7 +29,6 @@ func NewQueryChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string)
 	if schema == "" {
 		return nil, fmt.Errorf("schema cannot be empty")
 	}
-
 	return &QueryChatConfig{
 		prompt:       prompt,
 		systemPrompt: systemPrompt,
