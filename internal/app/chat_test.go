@@ -16,14 +16,12 @@ func TestChat(t *testing.T) {
 		err error
 	}
 	cases := []struct {
-		name   string
-		prompt string
-		want   want
-		setup  func() (*entity.LLMOutput, []map[string]interface{}, error)
+		name  string
+		want  want
+		setup func() (*entity.LLMOutput, []map[string]interface{}, error)
 	}{
 		{
-			name:   "success",
-			prompt: "What are the total purchases per user?",
+			name: "success",
 			want: want{
 				err: nil,
 			},
@@ -68,7 +66,7 @@ func TestChat(t *testing.T) {
 				mockRepo.EXPECT().Exec(*output).Return(datas, nil)
 			}
 
-			qcConfig, err := entity.NewQueryChatConfig(tt.prompt, "system", "user", "db", "schema")
+			qcConfig, err := entity.NewQueryChatConfig("prompt", "system", "user", "db", "schema")
 			if err != nil {
 				t.Fatalf("failed to create query chat config: %v", err)
 			}
