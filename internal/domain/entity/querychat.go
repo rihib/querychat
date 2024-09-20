@@ -5,6 +5,60 @@ import (
 	"fmt"
 )
 
+type QueryChatConfig struct {
+	prompt       string
+	systemPrompt string
+	userPrompt   string
+	dbName       string
+	schema       string
+}
+
+func NewQueryChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string) (*QueryChatConfig, error) {
+	if prompt == "" {
+		return nil, fmt.Errorf("prompt cannot be empty")
+	}
+	if systemPrompt == "" {
+		return nil, fmt.Errorf("system prompt cannot be empty")
+	}
+	if userPrompt == "" {
+		return nil, fmt.Errorf("user prompt cannot be empty")
+	}
+	if dbName == "" {
+		return nil, fmt.Errorf("db name cannot be empty")
+	}
+	if schema == "" {
+		return nil, fmt.Errorf("schema cannot be empty")
+	}
+
+	return &QueryChatConfig{
+		prompt:       prompt,
+		systemPrompt: systemPrompt,
+		userPrompt:   userPrompt,
+		dbName:       dbName,
+		schema:       schema,
+	}, nil
+}
+
+func (qcc *QueryChatConfig) Prompt() string {
+	return qcc.prompt
+}
+
+func (qcc *QueryChatConfig) SystemPrompt() string {
+	return qcc.systemPrompt
+}
+
+func (qcc *QueryChatConfig) UserPrompt() string {
+	return qcc.userPrompt
+}
+
+func (qcc *QueryChatConfig) DBName() string {
+	return qcc.dbName
+}
+
+func (qcc *QueryChatConfig) Schema() string {
+	return qcc.schema
+}
+
 type VisualizableData struct {
 	datas []map[string]interface{}
 	chart map[string]string

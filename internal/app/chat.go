@@ -1,23 +1,22 @@
 package app
 
 import (
-	"github.com/rihib/querychat/internal/config"
 	"github.com/rihib/querychat/internal/domain/entity"
 	"github.com/rihib/querychat/internal/domain/usecase"
 )
 
-func Chat(prompt string, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
-	originalPrompt, err := entity.NewOriginalPrompt(prompt)
+func Chat(qcConfig entity.QueryChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
+	originalPrompt, err := entity.NewOriginalPrompt(qcConfig.Prompt())
 	if err != nil {
 		return nil, err
 	}
 
-	templatePrompt, err := entity.NewTemplatePrompt(config.SYSTEM_PROMPT, config.USER_PROMPT)
+	templatePrompt, err := entity.NewTemplatePrompt(qcConfig.SystemPrompt(), qcConfig.UserPrompt())
 	if err != nil {
 		return nil, err
 	}
 
-	optimizedPrompt, err := entity.NewOptimizedPrompt(*originalPrompt, *templatePrompt, config.DB_NAME, config.SCHEMA_FILE_PATH)
+	optimizedPrompt, err := entity.NewOptimizedPrompt(*originalPrompt, *templatePrompt, qcConfig.DBName(), qcConfig.Schema())
 	if err != nil {
 		return nil, err
 	}

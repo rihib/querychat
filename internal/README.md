@@ -4,9 +4,12 @@
 
 ### リファクタ
 
-#### コメント
+#### その他
 
+- [ ] よりわかりやすいコードにする
 - [ ] コメントを適宜つける
+- [ ] ファイルパスを相対パスにする
+- [ ] 値渡しと参照渡しの使い分けが混在しているので、統一する（規則を決める）
 
 #### context
 
@@ -20,6 +23,11 @@
 
 - [ ] ログをきちんと書くようにする。Info, Error, Warn, Debug, Trace, Fatal, Panic とか
 - [ ] loggerの設定もきちんとやる。環境変数を使って、development, production, staging とかでログの出力先を変えるとか
+- [ ] ログを見やすくする
+  - [Creating a pretty console logger using Go's slog package](https://dusted.codes/creating-a-pretty-console-logger-using-gos-slog-package)
+  - [Logging in Go with Slog: The Ultimate Guide](https://betterstack.com/community/guides/logging/logging-in-go/)
+  - [Pretty handler for structured Logging with slog](https://github.com/go-slog-handler/slog-handler)
+  - [Go公式の構造化ロガー（予定）のslogの出力を見やすくしてみる](https://zenn.dev/mizutani/articles/golang-clog-handler)
 - [ ] ログ出力するときに、`slog.Error(ctx, "chat successful")` みたいな感じでcontextの中身を表示する。そうすることでログを追いやすくなる
 
 ### API
@@ -31,4 +39,6 @@
 
 - [ ] 認証機能を実装する
 - [ ] Remixでフロントエンドを作る
+- [ ] GitHub ActionsでCI/CDパイプラインを作る
 - [ ] クエリを実行するときにデータベースが変更されないようにする（そもそもこのアプリケーションに書き込み権限を与えない？dryrunして事前に検知する？）
+- [ ] MySQL, PostgreSQLにも対応する

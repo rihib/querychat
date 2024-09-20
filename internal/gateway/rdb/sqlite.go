@@ -12,15 +12,12 @@ type SQLite3 struct {
 	DB *sql.DB
 }
 
-func NewSQLite3(name, filepath string) (*SQLite3, error) {
-	if name == "" {
-		return nil, fmt.Errorf("name cannot be empty")
-	}
+func NewSQLite3(filepath string) (*SQLite3, error) {
 	if filepath == "" {
 		return nil, fmt.Errorf("filepath cannot be empty")
 	}
 
-	db, err := sql.Open(name, filepath)
+	db, err := sql.Open("sqlite3", filepath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %v", err)
 	}

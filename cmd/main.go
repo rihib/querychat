@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/rihib/querychat/internal/app"
 	"github.com/rihib/querychat/internal/config"
+	"github.com/rihib/querychat/internal/domain/entity"
 	"github.com/rihib/querychat/internal/gateway/llm"
 	"github.com/rihib/querychat/internal/gateway/rdb"
 )
@@ -21,6 +22,23 @@ func init() {
 }
 
 func main() {
+	// qcConfig
+	schema, err := os.ReadFile(config.SCHEMA_FILE_PATH)
+	if err != nil {
+		slog.Error("failed to read schema file", "msg", err.Error())
+	}
+	qcConfig, err := entity.NewQueryChatConfig(
+		PROMPT,
+		config.SYSTEM_PROMPT,
+		config.USER_PROMPT,
+		config.DB_NAME,
+		string(schema),
+	)
+	if err != nil {
+		slog.Error("failed to create query chat config", "msg", err.Error())
+	}
+
+	// LLM
 	if err := godotenv.Load(config.ENV_FILE_PATH); err != nil {
 		slog.Error("error loading .env file", "msg", err.Error())
 	}
@@ -30,12 +48,14 @@ func main() {
 		slog.Error("failed to create llm", "msg", err.Error())
 	}
 
-	repo, err := rdb.NewSQLite3(config.DB_NAME, config.DB_FILE_PATH)
+	// Repo
+	repo, err := rdb.NewSQLite3(config.DB_FILE_PATH)
 	if err != nil {
 		slog.Error("failed to create repo", "msg", err.Error())
 	}
 
-	vd, err := app.Chat(PROMPT, llm, repo)
+	// Chat
+	vd, err := app.Chat(*qcConfig, llm, repo)
 	if err != nil {
 		slog.Error("failed to chat", "msg", err.Error())
 		return

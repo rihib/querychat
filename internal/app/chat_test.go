@@ -1,7 +1,6 @@
 package app_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -43,14 +42,6 @@ func TestChat(t *testing.T) {
 				return output, datas, nil
 			},
 		},
-		{
-			name:   "empty prompt",
-			prompt: "",
-			want: want{
-				vd:  nil,
-				err: fmt.Errorf("prompt cannot be empty"),
-			},
-		},
 	}
 
 	for _, tt := range cases {
@@ -77,8 +68,13 @@ func TestChat(t *testing.T) {
 				mockRepo.EXPECT().Exec(*output).Return(datas, nil)
 			}
 
+			qcConfig, err := entity.NewQueryChatConfig(tt.prompt, "system", "user", "db", "schema")
+			if err != nil {
+				t.Fatalf("failed to create query chat config: %v", err)
+			}
+
 			// Act
-			vd, err := app.Chat(tt.prompt, mockLLM, mockRepo)
+			vd, err := app.Chat(*qcConfig, mockLLM, mockRepo)
 
 			// Assert
 			assert.Equal(t, tt.want.vd, vd)
