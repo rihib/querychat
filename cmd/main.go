@@ -27,13 +27,7 @@ func main() {
 	if err != nil {
 		slog.Error("failed to read schema file", "msg", err.Error())
 	}
-	cc, err := entity.NewChatConfig(
-		PROMPT,
-		config.SYSTEM_PROMPT,
-		config.USER_PROMPT,
-		config.DB_NAME,
-		string(schema),
-	)
+	cc, err := entity.NewChatConfig(PROMPT, config.DB_NAME, string(schema))
 	if err != nil {
 		slog.Error("failed to create query chat config", "msg", err.Error())
 	}
@@ -49,7 +43,7 @@ func main() {
 	}
 
 	// Repo
-	repo, err := rdb.NewSQLite3(config.DB_FILE_PATH)
+	repo, err := rdb.NewSQLite3(config.SQLITE3_DB_FILE_PATH)
 	if err != nil {
 		slog.Error("failed to create repo", "msg", err.Error())
 	}

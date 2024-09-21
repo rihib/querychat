@@ -17,15 +17,9 @@ type ChatConfig struct {
 	schema       string
 }
 
-func NewChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string) (*ChatConfig, error) {
+func NewChatConfig(prompt, dbName, schema string) (*ChatConfig, error) {
 	if prompt == "" {
 		return nil, fmt.Errorf("prompt cannot be empty")
-	}
-	if systemPrompt == "" {
-		return nil, fmt.Errorf("system prompt cannot be empty")
-	}
-	if userPrompt == "" {
-		return nil, fmt.Errorf("user prompt cannot be empty")
 	}
 	if dbName == "" {
 		return nil, fmt.Errorf("db name cannot be empty")
@@ -35,8 +29,8 @@ func NewChatConfig(prompt, systemPrompt, userPrompt, dbName, schema string) (*Ch
 	}
 	return &ChatConfig{
 		prompt:       prompt,
-		systemPrompt: systemPrompt,
-		userPrompt:   userPrompt,
+		systemPrompt: SYSTEM_PROMPT,
+		userPrompt:   USER_PROMPT,
 		dbName:       dbName,
 		schema:       schema,
 	}, nil

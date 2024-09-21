@@ -68,8 +68,6 @@ func TestChat(t *testing.T) {
 
 			cc, err := entity.NewChatConfig(
 				"What are the total purchases per user? (sample prompt)",
-				"system prompt placeholder",
-				"user prompt placeholder",
 				"db name placeholder",
 				"schema placeholder",
 			)
