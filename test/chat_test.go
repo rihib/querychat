@@ -11,7 +11,7 @@ func TestIntegration_Chat(t *testing.T) {
 	cmd.Env = append(
 		cmd.Environ(),
 		"PROMPT=What are the monthly sales for 2013?",
-		"ENV_FILE_PATH=/Users/rihib/dev/querychat/internal/config/.env",
+		"ENV_FILE_PATH=../internal/config/.env",
 	)
 
 	var stdout, stderr bytes.Buffer
