@@ -57,7 +57,7 @@ func TestChat(t *testing.T) {
 				if err != nil {
 					t.Fatalf("failed to setup: %v", err)
 				}
-				wantVD, err := entity.NewVisualizableData(datas, *output)
+				wantVD, err := entity.NewVisualizableData(*output, datas)
 				if err != nil {
 					t.Fatalf("failed to create visualizable data: %v", err)
 				}

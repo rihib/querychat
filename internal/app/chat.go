@@ -25,7 +25,7 @@ func Chat(cc entity.ChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*
 		return nil, err
 	}
 
-	vd, err := entity.NewVisualizableData(datas, *output)
+	vd, err := entity.NewVisualizableData(*output, datas)
 	if err != nil {
 		return nil, err
 	}

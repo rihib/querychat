@@ -102,10 +102,6 @@ func (output *LLMOutput) Query() string {
 	return output.query
 }
 
-func (output *LLMOutput) Chart() string {
-	return output.chart
-}
-
 /*
 VisualizableData is the data that can be visualized.
 
@@ -117,16 +113,17 @@ Example:
 	}
 */
 type VisualizableData struct {
-	datas []map[string]interface{}
-	chart map[string]string
+	chart         map[string]string
+	datas         []map[string]interface{}
+	executedQuery string
 }
 
-func NewVisualizableData(datas []map[string]interface{}, output LLMOutput) (*VisualizableData, error) {
+func NewVisualizableData(output LLMOutput, datas []map[string]interface{}) (*VisualizableData, error) {
 	if datas == nil {
 		return nil, fmt.Errorf("datas cannot be nil")
 	}
 
-	chartBytes := []byte(output.Chart())
+	chartBytes := []byte(output.chart)
 	if !json.Valid(chartBytes) {
 		return nil, fmt.Errorf("provided chart is not valid JSON")
 	}
@@ -155,15 +152,8 @@ func NewVisualizableData(datas []map[string]interface{}, output LLMOutput) (*Vis
 	}
 
 	return &VisualizableData{
-		datas: datas,
-		chart: cleanedChart,
+		chart:         cleanedChart,
+		datas:         datas,
+		executedQuery: output.query,
 	}, nil
-}
-
-func (vd *VisualizableData) Datas() []map[string]interface{} {
-	return vd.datas
-}
-
-func (vd *VisualizableData) Chart() map[string]string {
-	return vd.chart
 }
