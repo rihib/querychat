@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestChat(t *testing.T) {
+func TestUnit_Chat(t *testing.T) {
 	type want struct {
 		vd  *entity.VisualizableData
 		err error

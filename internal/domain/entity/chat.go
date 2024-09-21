@@ -104,6 +104,7 @@ Example:
 	{
 		"chart": {"type": "bar", "x": "UserName", "y": "TotalAmount"},
 		"datas": [{"UserName": "Alice", "TotalAmount": 100},{"UserName": "Bob", "TotalAmount": 200}],
+		"executedQuery": "SELECT user_name, SUM(amount) AS total_amount FROM purchases GROUP BY user_id, user_name"
 	}
 */
 type VisualizableData struct {
@@ -150,4 +151,16 @@ func NewVisualizableData(output LLMOutput, datas []map[string]interface{}) (*Vis
 		datas:         datas,
 		executedQuery: output.query,
 	}, nil
+}
+
+func (vd *VisualizableData) Chart() map[string]string {
+	return vd.chart
+}
+
+func (vd *VisualizableData) Datas() []map[string]interface{} {
+	return vd.datas
+}
+
+func (vd *VisualizableData) ExecutedQuery() string {
+	return vd.executedQuery
 }

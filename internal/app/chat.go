@@ -1,6 +1,8 @@
 package app
 
 import (
+	"log/slog"
+
 	"github.com/rihib/querychat/internal/domain/entity"
 	"github.com/rihib/querychat/internal/domain/usecase"
 )
@@ -29,6 +31,7 @@ func Chat(cc entity.ChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*
 	if err != nil {
 		return nil, err
 	}
+	slog.Info("VisualizableData", "chart", vd.Chart(), "datas", vd.Datas(), "query", vd.ExecutedQuery())
 
 	return vd, nil
 }
