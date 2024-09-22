@@ -18,12 +18,15 @@ const (
 	requestTimeout = 10 * time.Second
 )
 
+type requestIDKey struct{}
+
 func main() {
 	// context
 	ctx := context.Background()
 	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
 	defer cancel()
-	ctx = context.WithValue(ctx, "requestID", uuid.New().String())
+	requestID := requestIDKey{}
+	ctx = context.WithValue(ctx, requestID, uuid.New().String())
 
 	// logger
 	level := new(slog.LevelVar)
