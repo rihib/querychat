@@ -1,14 +1,14 @@
 package entity
 
 const (
-	SYSTEM_PROMPT = "Given this database schema:\n" +
+	systemPrompt = "Given this database schema:\n" +
 		"\n" +
 		"```sql\n" +
 		"%s\n" +
 		"```\n" +
 		"\n"
 
-	USER_PROMPT = "Based on the provided database schema, please perform the following tasks:\n" +
+	userPrompt = "Based on the provided database schema, please perform the following tasks:\n" +
 		"\n" +
 		"1. Craft a %s query that answers '%s'.\n" +
 		"  Ensure the query:\n" +

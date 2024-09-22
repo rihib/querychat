@@ -2,6 +2,8 @@
 package usecase
 
 import (
+	"log/slog"
+
 	"github.com/rihib/querychat/internal/domain/entity"
 )
 
@@ -23,6 +25,7 @@ func NewChatUsecase(llm LLM, repo ChatRepository) *ChatUsecase {
 }
 
 func (cu *ChatUsecase) AskLLM(prompt entity.OptimizedPrompt) (*entity.LLMOutput, error) {
+	slog.Info("AskLLM")
 	return cu.llm.Ask(prompt)
 }
 
@@ -34,5 +37,13 @@ Example return value:
 [{"UserName": "Alice", "TotalAmount": 100}, {"UserName": "Bob", "TotalAmount": 200}]
 */
 func (cu *ChatUsecase) ExecQuery(output entity.LLMOutput) ([]map[string]interface{}, error) {
+	slog.Info(
+		"ExecQuery",
+		slog.Group(
+			"LLMOutput",
+			"query", output.Query(),
+			"chart", output.Chart(),
+		),
+	)
 	return cu.repo.Exec(output)
 }

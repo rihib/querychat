@@ -29,11 +29,19 @@ func NewChatConfig(prompt, dbName, schema string) (*ChatConfig, error) {
 	}
 	return &ChatConfig{
 		prompt:       prompt,
-		systemPrompt: SYSTEM_PROMPT,
-		userPrompt:   USER_PROMPT,
+		systemPrompt: systemPrompt,
+		userPrompt:   userPrompt,
 		dbName:       dbName,
 		schema:       schema,
 	}, nil
+}
+
+func (cc *ChatConfig) Prompt() string {
+	return cc.prompt
+}
+
+func (cc *ChatConfig) DBName() string {
+	return cc.dbName
 }
 
 /*
@@ -94,6 +102,10 @@ func NewLLMOutput(query string, chart string) (*LLMOutput, error) {
 
 func (output *LLMOutput) Query() string {
 	return output.query
+}
+
+func (output *LLMOutput) Chart() string {
+	return output.chart
 }
 
 /*

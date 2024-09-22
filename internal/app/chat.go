@@ -11,6 +11,14 @@ import (
 Chat is a function that asks LLM, gets the query and executes it, and returns the visualizable data.
 */
 func Chat(cc entity.ChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*entity.VisualizableData, error) {
+	slog.Info(
+		"chat",
+		slog.Group(
+			"config",
+			"prompt", cc.Prompt(),
+			"dbName", cc.DBName(),
+		),
+	)
 	optimizedPrompt, err := entity.NewOptimizedPrompt(cc)
 	if err != nil {
 		return nil, err
@@ -21,7 +29,6 @@ func Chat(cc entity.ChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*
 	if err != nil {
 		return nil, err
 	}
-
 	datas, err := cu.ExecQuery(*output)
 	if err != nil {
 		return nil, err
@@ -31,7 +38,15 @@ func Chat(cc entity.ChatConfig, llm usecase.LLM, repo usecase.ChatRepository) (*
 	if err != nil {
 		return nil, err
 	}
-	slog.Info("VisualizableData", "chart", vd.Chart(), "datas", vd.Datas(), "query", vd.ExecutedQuery())
+	slog.Info(
+		"chat",
+		slog.Group(
+			"vd",
+			"chart", vd.Chart(),
+			"datas", vd.Datas(),
+			"executedQuery", vd.ExecutedQuery(),
+		),
+	)
 
 	return vd, nil
 }

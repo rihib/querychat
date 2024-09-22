@@ -66,11 +66,7 @@ func TestUnit_Chat(t *testing.T) {
 				mockRepo.EXPECT().Exec(*output).Return(datas, nil)
 			}
 
-			cc, err := entity.NewChatConfig(
-				"What are the total purchases per user? (sample prompt)",
-				"db name placeholder",
-				"schema placeholder",
-			)
+			cc, err := entity.NewChatConfig("What are the total purchases per user?", "DB NAME", "SCHEMA")
 			if err != nil {
 				t.Fatalf("failed to create query chat config: %v", err)
 			}

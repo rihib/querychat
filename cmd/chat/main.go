@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/rihib/querychat/internal/app"
 	"github.com/rihib/querychat/internal/domain/entity"
@@ -11,51 +14,71 @@ import (
 	"github.com/rihib/querychat/internal/gateway/rdb"
 )
 
-func init() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
-}
+const (
+	requestTimeout = 10 * time.Second
+)
 
 func main() {
-	PROMPT := os.Getenv("PROMPT")
-	ENV_FILE_PATH := os.Getenv("ENV_FILE_PATH")
-	if err := godotenv.Load(ENV_FILE_PATH); err != nil {
+	// context
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
+	defer cancel()
+	ctx = context.WithValue(ctx, "requestID", uuid.New().String())
+
+	// logger
+	level := new(slog.LevelVar)
+	logger := slog.New(
+		slog.NewJSONHandler(
+			os.Stdout,
+			&slog.HandlerOptions{
+				AddSource: true,
+			},
+		),
+	)
+	slog.SetDefault(logger)
+
+	// env
+	envFilePath := os.Getenv("ENV_FILE_PATH")
+	if err := godotenv.Load(envFilePath); err != nil {
 		slog.Error("error loading .env file", "msg", err.Error())
 	}
-	API_KEY := os.Getenv("API_KEY")
-	ENVIRONMENT := os.Getenv("ENVIRONMENT")
-	DB_NAME := os.Getenv("DB_NAME")
-	SCHEMA_FILE_PATH := os.Getenv("SCHEMA_FILE_PATH")
-	DB_FILE_PATH := os.Getenv("DB_FILE_PATH")
+	apiKey := os.Getenv("API_KEY")
+	dbFilePath := os.Getenv("DB_FILE_PATH")
+	dbName := os.Getenv("DB_NAME")
+	environment := os.Getenv("ENVIRONMENT")
+	prompt := os.Getenv("LLM_PROMPT")
+	schemaFilePath := os.Getenv("SCHEMA_FILE_PATH")
 
-	switch ENVIRONMENT {
+	switch environment {
 	case "local":
+		level.Set(slog.LevelDebug)
+
 		// Chat Config
-		schema, err := os.ReadFile(SCHEMA_FILE_PATH)
+		schema, err := os.ReadFile(schemaFilePath)
 		if err != nil {
-			slog.Error("failed to read schema file", "msg", err.Error())
+			slog.Error(err.Error())
 		}
-		cc, err := entity.NewChatConfig(PROMPT, DB_NAME, string(schema))
+		cc, err := entity.NewChatConfig(prompt, dbName, string(schema))
 		if err != nil {
-			slog.Error("failed to create query chat config", "msg", err.Error())
+			slog.Error(err.Error())
 		}
 
 		// LLM
-		llm, err := llm.NewGPT4(API_KEY)
+		llm, err := llm.NewGPT4(apiKey)
 		if err != nil {
-			slog.Error("failed to create llm", "msg", err.Error())
+			slog.Error(err.Error())
 		}
 
 		// Repo
-		repo, err := rdb.NewSQLite3(DB_FILE_PATH)
+		repo, err := rdb.NewSQLite3(dbFilePath)
 		if err != nil {
-			slog.Error("failed to create repo", "msg", err.Error())
+			slog.Error(err.Error())
 		}
 
 		// Chat
 		_, err = app.Chat(*cc, llm, repo)
 		if err != nil {
-			slog.Error("failed to chat", "msg", err.Error())
+			slog.Error(err.Error())
 		}
 
 	case "development":
