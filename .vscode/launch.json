@@ -9,13 +9,12 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${file}",
+      "program": "cmd/chat/main.go",
       "env": {
-        "ENVIRONMENT": "local",
+        "LLM_PROMPT": "What are the monthly sales for 2013?",
+        "ENV_FILE_PATH": "../../internal/config/.env",
       },
-      "args": [
-        "-config=config/config.go"
-      ]
+      "args": []
     }
   ]
 }
